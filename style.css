@@ -1,0 +1,713 @@
+/* ==========================================================
+   DESIGN TOKENS
+   ========================================================== */
+:root {
+  --black: #0d0b08;
+  --black-2: #1a1610;
+  --gold: #d4a73c;
+  --gold-soft: #f0d98a;
+  --gold-glow: rgba(212, 167, 60, .28);
+  --white: #fbf7ee;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0
+}
+
+html {
+  scroll-behavior: smooth
+}
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.hidden {
+  display: none !important
+}
+
+/* ==========================================================
+   BACKGROUND — Animated warm gradient + 3 large glowing orbs
+   ========================================================== */
+
+/* Base: dark espresso with a slow shifting gradient */
+.atmo-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 110% 70% at 10% 20%,  rgba(180,120,20,.08) 0%, transparent 55%),
+    radial-gradient(ellipse  90% 90% at 88% 80%,  rgba(160,100,15,.06) 0%, transparent 52%),
+    #0d0b08;
+  background-size: 200% 200%;
+  animation: bgShift 18s ease-in-out infinite alternate;
+}
+@keyframes bgShift {
+  from { background-position: 0%   0%,   100% 100%, center }
+  to   { background-position: 100% 100%, 0%   0%,   center }
+}
+
+/* Shared orb base */
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(100px);
+  will-change: transform, opacity;
+}
+
+/* ── Orb 1: top-left, large golden bloom ── */
+.bg-orb-1 {
+  width: 900px;
+  height: 750px;
+  top: -180px;
+  left: -200px;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(212, 167, 60, .28) 0%,
+    rgba(185, 130, 22, .10) 40%,
+    transparent 68%);
+  animation: orb1Float 20s ease-in-out infinite alternate;
+}
+@keyframes orb1Float {
+  from { transform: translate(0,    0)    scale(1);    opacity: .22 }
+  to   { transform: translate(200px, 180px) scale(1.18); opacity: .38 }
+}
+
+/* ── Orb 2: right side, amber drift ── */
+.bg-orb-2 {
+  width: 750px;
+  height: 750px;
+  top: 5%;
+  right: -220px;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(205, 145, 30, .26) 0%,
+    rgba(165, 105, 15, .09) 42%,
+    transparent 68%);
+  animation: orb2Float 26s ease-in-out infinite alternate;
+  animation-delay: -10s;
+}
+@keyframes orb2Float {
+  from { transform: translate(0,     0)     scale(1);    opacity: .20 }
+  to   { transform: translate(-180px, 150px) scale(1.22); opacity: .35 }
+}
+
+/* ── Orb 3: bottom-center, warm copper pool ── */
+.bg-orb-3 {
+  width: 1000px;
+  height: 600px;
+  bottom: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at 50% 60%,
+    rgba(198, 138, 28, .24) 0%,
+    rgba(155, 100, 18, .08) 45%,
+    transparent 68%);
+  animation: orb3Float 22s ease-in-out infinite alternate;
+  animation-delay: -6s;
+}
+@keyframes orb3Float {
+  from { transform: translateX(-50%) translateY(0)     scale(1);    opacity: .20 }
+  to   { transform: translateX(-44%) translateY(-140px) scale(1.15); opacity: .34 }
+}
+
+/* Vignette — keeps edges dark so content stays readable */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 85% 85% at 50% 50%,
+    transparent 35%,
+    rgba(0, 0, 0, .75) 100%);
+  pointer-events: none;
+}
+
+/* Accessibility — freeze background for reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+  .atmo-bg { animation: none }
+  .bg-orb-1, .bg-orb-2, .bg-orb-3 { animation: none !important }
+}
+
+/* ==========================================================
+   INTRO SECTION
+   ========================================================== */
+.intro {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.intro-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-logo {
+  width: clamp(220px, 46vw, 420px);
+  max-width: 90vw;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter:
+    drop-shadow(0 0 32px rgba(212, 167, 60, .45)) drop-shadow(0 4px 16px rgba(0, 0, 0, .7));
+  mix-blend-mode: lighten;
+  opacity: 0;
+  animation-name: logoReveal;
+  animation-duration: 1.1s;
+  animation-timing-function: cubic-bezier(.2, .8, .3, 1);
+  animation-delay: .2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes logoReveal {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(.94)
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1)
+  }
+}
+
+.enter {
+  margin-top: .5rem;
+  padding: .9rem 2.4rem;
+  border-radius: 50px;
+  background: transparent;
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
+  font: 500 1rem 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background .3s, color .3s, box-shadow .3s;
+  opacity: 0;
+  animation-name: logoReveal;
+  animation-duration: .8s;
+  animation-timing-function: ease;
+  animation-delay: .8s;
+  animation-fill-mode: forwards;
+}
+
+.enter:hover {
+  background: var(--gold);
+  color: var(--black);
+  box-shadow: 0 0 25px rgba(212, 167, 60, .5)
+}
+
+/* ==========================================================
+   APP SHELL
+   ========================================================== */
+.app {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.2rem 1.2rem 4rem;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1rem 0 2.2rem;
+}
+
+.brand-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation-name: brandReveal;
+  animation-duration: .75s;
+  animation-timing-function: cubic-bezier(.2, .8, .3, 1);
+  animation-delay: .15s;
+  animation-fill-mode: forwards;
+}
+
+.brand-logo {
+  width: clamp(130px, 22vw, 210px);
+  max-width: 60vw;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter:
+    drop-shadow(0 0 18px rgba(212, 167, 60, .5)) drop-shadow(0 2px 8px rgba(0, 0, 0, .8));
+  mix-blend-mode: lighten;
+}
+
+@keyframes brandReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-14px)
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}
+
+.back {
+  position: absolute;
+  left: 0;
+  background: none;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: .45rem 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  font: 400 .95rem 'Poppins', sans-serif;
+  transition: .25s;
+}
+
+.back:hover {
+  background: var(--gold);
+  color: var(--black)
+}
+
+/* ==========================================================
+   CATEGORY GRID
+   ========================================================== */
+#categories.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.4rem;
+}
+
+/* ==========================================================
+   CATEGORY CARD
+   ========================================================== */
+.card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 4/5;
+  background: var(--black-2);
+  border: 1px solid rgba(212, 167, 60, .38);
+  box-shadow:
+    0 0 22px rgba(212, 167, 60, .1),
+    0 8px 28px rgba(0, 0, 0, .55);
+  transition:
+    transform .4s cubic-bezier(.2, .8, .3, 1),
+    box-shadow .4s,
+    border-color .4s;
+  opacity: 0;
+  animation-name: cardEntrance;
+  animation-duration: .72s;
+  animation-timing-function: cubic-bezier(.22, .9, .3, 1.1);
+  animation-fill-mode: forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(52px) scale(.91)
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1)
+  }
+}
+
+.card:hover {
+  transform: translateY(-7px) scale(1.026);
+  border-color: rgba(212, 167, 60, .82);
+  box-shadow:
+    0 0 0 1px rgba(212, 167, 60, .55),
+    0 0 38px rgba(212, 167, 60, .25),
+    0 24px 55px rgba(0, 0, 0, .65);
+}
+
+.card:active {
+  transform: scale(.97);
+  box-shadow:
+    0 0 18px rgba(212, 167, 60, .18),
+    0 4px 18px rgba(0, 0, 0, .4);
+}
+
+.card-img-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .55s cubic-bezier(.2, .8, .3, 1);
+  will-change: transform;
+}
+
+.card:hover .card-img-wrap img {
+  transform: scale(1.09)
+}
+
+.card-img-wrap.no-img {
+  background: linear-gradient(155deg, #2c2415 0%, #14100a 100%);
+}
+
+.card-emoji-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 4.5rem;
+  opacity: .6;
+}
+
+.card-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, .03) 0%,
+      rgba(0, 0, 0, .08) 35%,
+      rgba(0, 0, 0, .60) 68%,
+      rgba(0, 0, 0, .88) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(212, 167, 60, .22);
+  transition: box-shadow .4s;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.card:hover::after {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(212, 167, 60, .75),
+    inset 0 0 45px rgba(212, 167, 60, .05);
+}
+
+.card-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: .85rem 1rem 1.1rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--gold-soft);
+  text-align: center;
+  letter-spacing: .04em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .95);
+  z-index: 2;
+  transition: color .3s;
+}
+
+.card:hover .card-name {
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 1)
+}
+
+/* ==========================================================
+   PRODUCTS — Compact horizontal card layout (original proportions)
+   ========================================================== */
+.cat-title {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+
+/* Single-column list (original) */
+.products-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* ----- Gold breathing glow keyframe ----- */
+@keyframes goldBreath {
+  0% {
+    box-shadow:
+      0 2px 12px rgba(0, 0, 0, .50),
+      0 0 8px rgba(212, 167, 60, .10),
+      0 0 0 1px rgba(212, 167, 60, .18)
+  }
+
+  50% {
+    box-shadow:
+      0 2px 16px rgba(0, 0, 0, .55),
+      0 0 22px rgba(212, 167, 60, .26),
+      0 0 0 1px rgba(212, 167, 60, .40)
+  }
+
+  100% {
+    box-shadow:
+      0 2px 12px rgba(0, 0, 0, .50),
+      0 0 8px rgba(212, 167, 60, .10),
+      0 0 0 1px rgba(212, 167, 60, .18)
+  }
+}
+
+/* ----- Individual product card ----- */
+.item {
+  display: flex;
+  flex-direction: row;
+  /* horizontal: thumb left, body right */
+  align-items: center;
+  gap: 1rem;
+  padding: 2.2rem;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--black-2);
+  border: 1px solid rgba(212, 167, 60, .22);
+
+  /* Animated gold glow — continuous breathing */
+  animation-name: itemReveal, goldBreath;
+  animation-duration: 520ms, 3.6s;
+  animation-timing-function: cubic-bezier(.22, 1, .36, 1), ease-in-out;
+  animation-fill-mode: forwards, none;
+  animation-iteration-count: 1, infinite;
+  /* animation-delay for itemReveal stagger comes from JS via --stagger;
+     goldBreath always starts shortly after reveal completes */
+  animation-delay: var(--stagger, 0ms), 0.7s;
+
+  opacity: 0;
+  /* hidden until itemReveal fires */
+  will-change: transform, opacity;
+  transition:
+    transform .35s cubic-bezier(.22, 1, .36, 1),
+    border-color .35s;
+}
+
+/* itemReveal: slides in from the side (--from set per card by JS)
+   Odd cards come from the left (-60px), even from the right (+60px).
+   A slight Y offset adds depth and makes it feel premium. */
+@keyframes itemReveal {
+  from {
+    opacity: 0;
+    transform: translateX(var(--from, -60px)) translateY(10px) scale(.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+}
+
+/* Hover: lift + brighter glow */
+.item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212, 167, 60, .60);
+  box-shadow:
+    0 6px 28px rgba(0, 0, 0, .60),
+    0 0 32px rgba(212, 167, 60, .32),
+    0 0 0 1.5px rgba(212, 167, 60, .55);
+  /* Pause the breathing on hover so the hover state feels deliberate */
+  animation-play-state: running, paused;
+}
+
+/* ----- Thumbnail — large image display ----- */
+.item-thumb {
+  width: 110px;
+  height: 110px;
+  border-radius: 18px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: linear-gradient(145deg, #2a1e0c 0%, #0d0b08 100%);
+  position: relative;
+}
+
+.item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Gold placeholder (no image) — warm circle mark, no emoji */
+.item-thumb--placeholder {
+  background:
+    radial-gradient(ellipse 70% 70% at 50% 45%,
+      rgba(212, 167, 60, .20) 0%,
+      transparent 72%),
+    linear-gradient(145deg, #221708 0%, #0d0b08 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-thumb--placeholder::after {
+  content: '';
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(212, 167, 60, .32);
+  box-shadow:
+    0 0 10px rgba(212, 167, 60, .14),
+    inset 0 0 6px rgba(212, 167, 60, .08);
+}
+
+/* ----- Text body ----- */
+.item-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .85rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: var(--white);
+  line-height: 1.3;
+  margin-bottom: .25rem;
+  word-break: break-word;
+}
+
+.item-desc {
+  font-size: .875rem;
+  color: #b9b2a2;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.item-price {
+  color: var(--gold);
+  font-weight: 500;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.item-currency {
+  font-size: .78rem;
+  font-weight: 400;
+  opacity: .85;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media(max-width:960px) {
+  #categories.grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem
+  }
+}
+
+@media(max-width:640px) {
+  #categories.grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: .85rem
+  }
+
+  .card-name {
+    font-size: 1.05rem;
+    padding: .75rem .85rem .9rem
+  }
+
+  .app {
+    padding: 1rem .9rem 3rem
+  }
+
+  .intro-logo {
+    width: clamp(180px, 70vw, 340px)
+  }
+
+  .item-thumb {
+    width: 90px;
+    height: 90px;
+    border-radius: 16px
+  }
+
+  .item-name { font-size: 1.05rem }
+  .item-desc { font-size: .82rem }
+  .item-price { font-size: 1rem }
+}
+
+@media(max-width:400px) {
+  #categories.grid {
+    grid-template-columns: 1fr;
+    gap: .75rem
+  }
+
+  .card {
+    aspect-ratio: 16/9
+  }
+
+  .item {
+    gap: .75rem;
+    padding: .85rem
+  }
+
+  .item-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 14px
+  }
+}
+
+/* ==========================================================
+   ACCESSIBILITY — prefers-reduced-motion
+   ========================================================== */
+@media(prefers-reduced-motion:reduce) {
+  * {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+
+  /* Make entrance elements immediately visible */
+  .card,
+  .brand-logo-wrap,
+  .intro-logo,
+  .enter,
+  .item {
+    opacity: 1 !important
+  }
+
+  /* Static gold border instead of breathing glow */
+  .item {
+    box-shadow:
+      0 2px 12px rgba(0, 0, 0, .50),
+      0 0 10px rgba(212, 167, 60, .18),
+      0 0 0 1px rgba(212, 167, 60, .28) !important;
+  }
+
+  /* Kill background effects */
+  .orb,
+  .wisp,
+  .dust {
+    opacity: 0 !important;
+    animation: none !important
+  }
+}
