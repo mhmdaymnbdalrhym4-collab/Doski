@@ -26,6 +26,9 @@ body {
   font-family: 'Poppins', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  /* Smooth scroll on iOS Safari */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
 }
 
 .hidden {
@@ -60,8 +63,11 @@ body {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  filter: blur(100px);
-  will-change: transform, opacity;
+  filter: blur(80px);
+  will-change: transform;
+  /* Force GPU layer — avoids CPU-side compositing on Safari */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 /* ── Orb 1: top-left, large golden bloom ── */
@@ -171,6 +177,10 @@ body {
   animation-timing-function: cubic-bezier(.2, .8, .3, 1);
   animation-delay: .2s;
   animation-fill-mode: forwards;
+  /* GPU layer */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: opacity, transform;
 }
 
 @keyframes logoReveal {
@@ -249,6 +259,9 @@ body {
   filter:
     drop-shadow(0 0 18px rgba(212, 167, 60, .5)) drop-shadow(0 2px 8px rgba(0, 0, 0, .8));
   mix-blend-mode: lighten;
+  /* GPU layer */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 @keyframes brandReveal {
@@ -314,6 +327,8 @@ body {
   animation-timing-function: cubic-bezier(.22, .9, .3, 1.1);
   animation-fill-mode: forwards;
   will-change: transform, opacity;
+  /* Paint isolation — each card repaints independently */
+  contain: layout style;
 }
 
 @keyframes cardEntrance {
@@ -729,6 +744,10 @@ body {
     0 2px 20px rgba(212, 167, 60, 0.45),
     0 4px 40px rgba(0, 0, 0, 0.4);
   animation: bannerSlideDown .7s cubic-bezier(.22, .9, .3, 1.1) forwards;
+  /* GPU compositing — prevents iOS jank on fixed elements */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* Shimmer overlay */
@@ -1013,5 +1032,58 @@ body {
   .dust {
     opacity: 0 !important;
     animation: none !important
+  }
+}
+
+/* ==========================================================
+   MOBILE PERFORMANCE — disable heavy effects on phones
+   ========================================================== */
+@media (max-width: 768px) {
+
+  /* Kill orb animations — biggest GPU drain on mobile */
+  .bg-orb-1, .bg-orb-2, .bg-orb-3 {
+    animation: none !important;
+    opacity: .18 !important;
+    filter: blur(60px);
+  }
+
+  /* Freeze background shift */
+  .atmo-bg {
+    animation: none !important;
+  }
+
+  /* Remove mix-blend-mode on mobile — #1 Safari perf killer */
+  .intro-logo,
+  .brand-logo {
+    mix-blend-mode: normal;
+    /* Compensate with a slightly stronger drop-shadow */
+    filter:
+      drop-shadow(0 0 28px rgba(212, 167, 60, .5))
+      drop-shadow(0 3px 12px rgba(0, 0, 0, .85));
+  }
+
+  /* Reduce card animation stagger on mobile for faster feel */
+  .card {
+    animation-duration: .45s !important;
+  }
+
+  /* Lighter item animation on mobile */
+  .item {
+    animation-duration: 380ms, 4s !important;
+  }
+
+  /* Hide dust particles via CSS (JS also respects screen size) */
+  .dust {
+    display: none !important;
+  }
+}
+
+/* Save-data / slow connection — strip all animations */
+@media (prefers-reduced-data: reduce) {
+  .bg-orb-1, .bg-orb-2, .bg-orb-3,
+  .atmo-bg,
+  .discount-banner__shimmer {
+    animation: none !important;
+    opacity: 0 !important;
   }
 }

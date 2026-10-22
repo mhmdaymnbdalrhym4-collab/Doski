@@ -205,6 +205,8 @@ function productThumb(img, name){
    This guarantees cross-browser compatibility.
    --------------------------------------------------- */
 (function spawnDust(){
+  /* Skip entirely on mobile — CSS also hides them, but this saves JS + memory */
+  if(window.innerWidth <= 768) return;
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const field = document.getElementById('dustField');
@@ -215,7 +217,8 @@ function productThumb(img, name){
   document.head.appendChild(styleEl);
   const sheet = styleEl.sheet;
 
-  const COUNT = 30;
+  /* Reduced from 30 → 18 particles for better GPU performance */
+  const COUNT = 18;
 
   for(let i = 0; i < COUNT; i++){
     /* Position */
@@ -270,6 +273,7 @@ function productThumb(img, name){
     field.appendChild(d);
   }
 })();
+
 
 /* ---------- render categories ---------- */
 function renderCategories(){
