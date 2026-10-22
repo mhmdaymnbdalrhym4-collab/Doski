@@ -1087,3 +1087,98 @@ body {
     opacity: 0 !important;
   }
 }
+
+/* ==========================================================
+   iOS SAFARI — Targeted performance fixes
+   Applied via .is-ios class added by JS detection
+   ========================================================== */
+
+/* 1. KILL BLUR FILTERS — #1 cause of iOS slowdown.
+      iOS renders filter:blur() in CPU (software), not GPU.
+      Replace with a simple static gradient — zero cost.      */
+.is-ios .bg-orb-1,
+.is-ios .bg-orb-2,
+.is-ios .bg-orb-3 {
+  filter: none !important;
+  animation: none !important;
+  /* Keep a subtle static color hint so background isn't pitch black */
+  opacity: .12 !important;
+  border-radius: 50%;
+}
+
+/* Simple static warm background instead of animated orbs */
+.is-ios .atmo-bg {
+  animation: none !important;
+  background:
+    radial-gradient(ellipse 70% 55% at 15% 20%, rgba(180,120,20,.10) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 60% at 85% 80%, rgba(160,100,15,.07) 0%, transparent 55%),
+    #0d0b08 !important;
+}
+
+/* 2. STOP goldBreath — continuous box-shadow animation causes
+      constant GPU repaints on EVERY item card simultaneously. */
+.is-ios .item {
+  animation-name: itemReveal !important;
+  animation-iteration-count: 1 !important;
+  box-shadow:
+    0 2px 12px rgba(0,0,0,.5),
+    0 0 0 1px rgba(212,167,60,.22) !important;
+}
+.is-ios .item:hover {
+  /* On touch, hover state doesn't exist — remove the extra repaints */
+  box-shadow:
+    0 2px 12px rgba(0,0,0,.5),
+    0 0 0 1px rgba(212,167,60,.40) !important;
+  animation-play-state: running !important;
+}
+
+/* 3. REMOVE SHIMMER — the sweeping gradient animation on the
+      banner creates a compositing layer that fights iOS scroll. */
+.is-ios .discount-banner__shimmer {
+  display: none !important;
+}
+
+/* 4. CLEAR will-change — every will-change creates a GPU texture.
+      Too many textures on iOS = memory pressure = crashes & lag. */
+.is-ios .bg-orb,
+.is-ios .intro-logo,
+.is-ios .brand-logo,
+.is-ios .card,
+.is-ios .item,
+.is-ios .discount-banner,
+.is-ios .discount-banner__track {
+  will-change: auto !important;
+}
+
+/* 5. MIX-BLEND-MODE off — triggers software compositing on iOS. */
+.is-ios .intro-logo,
+.is-ios .brand-logo {
+  mix-blend-mode: normal !important;
+  filter:
+    drop-shadow(0 0 24px rgba(212,167,60,.55))
+    drop-shadow(0 3px 14px rgba(0,0,0,.9)) !important;
+}
+
+/* 6. Remove deprecated scroll property that causes iOS 13+ issues */
+.is-ios body {
+  -webkit-overflow-scrolling: auto !important;
+}
+
+/* 7. Card hover — on iPhone there's no hover, disable transform
+      so iOS doesn't pre-allocate a compositing layer for it.   */
+.is-ios .card:hover,
+.is-ios .card:active {
+  transform: none !important;
+}
+.is-ios .card:active {
+  border-color: rgba(212,167,60,.65);
+  box-shadow: 0 0 20px rgba(212,167,60,.2), 0 0 0 1px rgba(212,167,60,.45);
+}
+
+/* 8. Faster entrance animations — less time waiting on iOS */
+.is-ios .card {
+  animation-duration: .35s !important;
+}
+.is-ios .item {
+  animation-duration: 300ms !important;
+}

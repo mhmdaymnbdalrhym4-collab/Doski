@@ -184,6 +184,18 @@ const CURRENCY = "EGP";
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
 
+/* ---------- iOS / Safari detection ----------
+   Adds  .is-ios  on <html> so CSS can kill the specific
+   effects that tank performance on iOS WebKit:
+   blur filters, continuous box-shadow animations, etc.     */
+(function detectIOS(){
+  const ua  = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) ||
+                /* iPadOS 13+ reports MacIntel */
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (isIOS) document.documentElement.classList.add('is-ios');
+})();
+
 /**
  * Renders the product image area.
  * If img is provided → real photo with cover fit.
