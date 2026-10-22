@@ -65,13 +65,7 @@ const MENU = [
     { name:"DOSKI",              desc:"Our signature special dessert",           price:110,  img:"" },
   ]},
 
-  /* 4 ── Make It Yours */
-  { id:"make-it-yours", name:"Make It Yours", emoji:"", img:"Make It Yours.jpeg", items:[
-    { name:"Milk — Coconut / Oat", desc:"Plant-based milk upgrade",             price:20,  img:"" },
-    { name:"Extra Sauce",           desc:"Chocolate, caramel, or vanilla",       price:15,  img:"" },
-    { name:"Flavour",               desc:"Add your favourite syrup",             price:20,  img:"" },
-    { name:"Honey",                 desc:"Pure natural honey drizzle",           price:20,  img:"" },
-  ]},
+  
 
   /* 5 ── Iced Coffee */
   { id:"iced-coffee", name:"Iced Coffee", emoji:"", img:"Iced Coffee.jpeg", items:[
@@ -176,6 +170,15 @@ const MENU = [
     { name:"Iced Strawberry Matcha", desc:"Matcha layered with strawberry",           price:110,  img:"Iced Strawberry Matcha.jpeg" },
     { name:"Iced Mango Matcha",      desc:"Tropical mango meets matcha",              price:110,  img:"Iced Mango Matcha.jpeg" },
     { name:"Coconut Matcha",         desc:"Coconut milk & ceremonial matcha",         price:110,  img:"Coconut Matcha.jpeg" },
+  ]},
+
+  
+  /* 4 ── Make It Yours */
+  { id:"make-it-yours", name:"Make It Yours", emoji:"", img:"Make It Yours.jpeg", items:[
+    { name:"Milk — Coconut / Oat", desc:"Plant-based milk upgrade",             price:20,  img:"" },
+    { name:"Extra Sauce",           desc:"Chocolate, caramel, or vanilla",       price:15,  img:"" },
+    { name:"Flavour",               desc:"Add your favourite syrup",             price:20,  img:"" },
+    { name:"Honey",                 desc:"Pure natural honey drizzle",           price:20,  img:"" },
   ]},
 
 ];
